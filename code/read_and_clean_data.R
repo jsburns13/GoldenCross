@@ -68,7 +68,17 @@ df <- df %>%
 
 df3 <- df %>%
   mutate(time_to_gc = difftime(first_gc, date, units = "days")) %>%
-  filter(time_to_gc >= -120 & time_to_gc <= 120)
+  filter(time_to_gc >= -120 & time_to_gc <= 120) %>%
+  mutate(time_to_gc = as.numeric(time_to_gc, units="days"))
+
+### Create normalized stock prices
+
+df3 <- df3 %>%
+  mutate(logprice = log(prccd)) %>%
+  arrange(date) %>%
+  group_by(tic) %>%
+  mutate(pct_change=(prccd/lag(prccd)-1)*100) %>%
+  mutate(log_change=(logprice/lag(logprice)-1)*100)
 
 df2 %>%
   group_by(tic) %>%
