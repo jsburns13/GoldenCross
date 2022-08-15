@@ -146,7 +146,8 @@ max_df_full <- max_df_full %>%
   mutate(normalized_2 = case_when(
     time_to_maxgc == min(time_to_maxgc) ~ 1,
     TRUE ~ cumprod(1+(pct_change/100))
-  ))
+  )) %>%
+  rename(time_to_gc = time_to_maxgc)
 
 ### Find +/- 120 days from first gc
 
@@ -198,4 +199,12 @@ min_df_full <- min_df_full %>%
   mutate(normalized_2 = case_when(
     time_to_mingc == min(time_to_mingc) ~ 1,
     TRUE ~ cumprod(1+(pct_change/100))
-  ))
+  )) %>%
+  rename(time_to_gc = time_to_mingc)
+
+
+
+### Join both min and max data sets
+
+full_df <- max_df_full %>%
+  full_join(min_df_full)
