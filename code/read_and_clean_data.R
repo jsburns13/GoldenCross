@@ -6,7 +6,7 @@ library(zoo)
 ### Run filter_dates.R first to filter down to desired dates if .csv files
 ### aren't ready to go in the /data/ folder
 
-filename = "daily_stonks_NYSE_2000_2009.csv"
+filename = "daily_stonks_NYSE_Mid_2000_2009.csv"
 
 df <- read_csv(paste0("data/", filename))
   
@@ -198,7 +198,7 @@ rm(df)
 trigger <- exists('full_df')
 
 if (trigger) {
-  full_df %>%
+  full_df <- full_df %>%
     full_join(max_df_full) %>%
     full_join(min_df_full)
 } else {
@@ -208,7 +208,9 @@ if (trigger) {
 
 rm(max_df, max_df_full, min_df, min_df_full)
 
-### Let's deal with some market cap stuff
+### Adding an indicator to allow for TIC to be used as a fixed effect
+
+#fixed_tic = model.matrix(~full_df$tic+0)
 
 ### Create a focused data frame for t +/- 70
 
