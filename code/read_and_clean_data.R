@@ -3,23 +3,12 @@ library(fixest)
 library(vtable)
 library(zoo)
 
-df <- read_csv("data/daily_stonks_NYSE_2010_2019.csv")
+### Run filter_dates.R first to filter down to desired dates if .csv files
+### aren't ready to go in the /data/ folder
 
-### Clean data; pick only USD stocks on NYSE; filter to [2010, 2019]
-# This code section was created to pare down a larger dataset; it is no longer
-# needed (unless you query the full dataset again)
+filename = "daily_stonks_NYSE_2000_2009.csv"
 
-df <- df %>%
-  filter(curcdd == "USD") %>%
-  filter(exchg == 11) %>%
-  mutate(datadate = as.character(datadate)) %>%
-  mutate(date = as.Date(datadate, "%Y%m%d")) %>%
-  filter(date >= ISOdate(2010,01,01)) %>%
-  filter(date < ISOdate(2020,01,01))
-
-### Save as .csv for easier file size sharing - commented out for reasons
-
-# write.csv(df,"data/daily_stonks_NYSE_2010_2019.csv")
+df <- read_csv(paste0("data/", filename))
   
 ### Create rolling averages
 
@@ -202,9 +191,24 @@ min_df_full <- min_df_full %>%
   )) %>%
   rename(time_to_gc = time_to_mingc)
 
-
+rm(df)
 
 ### Join both min and max data sets
 
-full_df <- max_df_full %>%
-  full_join(min_df_full)
+trigger <- exists('full_df')
+
+if (trigger) {
+  full_df %>%
+    full_join(max_df_full) %>%
+    full_join(min_df_full)
+} else {
+  full_df <- max_df_full %>%
+    full_join(min_df_full)
+}
+
+rm(max_df, max_df_full, min_df, min_df_full)
+
+### Create a focused data frame for t +/- 70
+
+df_70 <- full_df %>%
+  filter(time_to_gc >= -70 & time_to_gc <= 70)
