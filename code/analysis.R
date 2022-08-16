@@ -38,4 +38,8 @@ pre_gc_log_model <- rdrobust(full_df$logprice, full_df$time_to_gc, c=-70, p=1, h
 
 rdplot(full_df$logprice, full_df$time_to_gc, c=-70, p=1, h=50, kernel="uniform", title="Log Price")
 
+ggplot(df_70, aes(x=time_to_gc, y=logprice, color=gc_pre_post)) +
+  geom_point() +
+  geom_vline(xintercept=0) +
+  geom_smooth(method="lm", se=FALSE)
 

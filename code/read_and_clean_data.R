@@ -208,7 +208,10 @@ if (trigger) {
 
 rm(max_df, max_df_full, min_df, min_df_full)
 
+### Let's deal with some market cap stuff
+
 ### Create a focused data frame for t +/- 70
 
 df_70 <- full_df %>%
   filter(time_to_gc >= -70 & time_to_gc <= 70)
+
