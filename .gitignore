@@ -2,4 +2,6 @@
 .Rhistory
 .RData
 .Ruserdata
-*.csv
+daily_stonks.csv
+daily_stonks_NYSE_2000_2009.csv
+daily_stonks_NYSE_2010_2019.csv
