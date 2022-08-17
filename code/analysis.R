@@ -56,3 +56,9 @@ ggplot(df_70, aes(x=time_to_gc, y=logprice, color=gc_pre_post)) +
   geom_point() +
   geom_vline(xintercept=0) +
   geom_smooth(method="lm", se=FALSE)
+
+ggplot(full_df, aes(x=time_to_gc, y=normalized_2, color=gc_pre_post)) +
+  geom_point() +
+  geom_vline(xintercept=0) +
+  geom_smooth(method="lm", se=FALSE) +
+  ylim(0,2)
