@@ -217,3 +217,10 @@ rm(max_df, max_df_full, min_df, min_df_full)
 df_70 <- full_df %>%
   filter(time_to_gc >= -70 & time_to_gc <= 70)
 
+df_neg_70 <- full_df %>%
+  filter(time_to_gc >= -120 & time_to_gc <= -20) %>%
+  mutate(time_to_neg70 = time_to_gc + 70) %>%
+  mutate(neg70 = case_when(
+    time_to_neg70 < 0 ~ 0,
+    TRUE ~ 1
+  ))
