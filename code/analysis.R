@@ -49,6 +49,7 @@ pre_gc_log_model <- rdrobust(get(table_name[1])$normalized_3, get(table_name[1])
 rdplot(get(table_name[1])$normalized_3, get(table_name[1])$time_to_gc, c=-70, p=1, h=50, kernel="uniform",
        title=paste0(market_cap," Cap Log Price"))
 
+<<<<<<< HEAD
 model_log_neg70 <- feols(normalized_3 ~ time_to_neg70 * neg70, data = df_neg_70)
 etable(model_log_neg70)
 
@@ -57,3 +58,18 @@ ggplot(df_70, aes(x=time_to_gc, y=normalized_3, color=gc_pre_post)) +
   geom_vline(xintercept=0) +
   geom_smooth(method="lm", se=FALSE) +
   coord_cartesian(ylim=c(0.5,4))
+=======
+model_log_neg70 <- feols(logprice ~ time_to_neg70 * neg70, data = df_neg_70)
+etable(model_log_neg70)
+
+ggplot(df_70, aes(x=time_to_gc, y=logprice, color=gc_pre_post)) +
+  geom_point() +
+  geom_vline(xintercept=0) +
+  geom_smooth(method="lm", se=FALSE)
+
+ggplot(full_df, aes(x=time_to_gc, y=normalized_2, color=gc_pre_post)) +
+  geom_point() +
+  geom_vline(xintercept=0) +
+  geom_smooth(method="lm", se=FALSE) +
+  ylim(0,2)
+>>>>>>> 2b273f2933b01da5b57d6e528b35d816fe035f62
