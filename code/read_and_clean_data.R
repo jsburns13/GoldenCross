@@ -6,7 +6,7 @@ library(zoo)
 ### Run filter_dates.R first to filter down to desired dates if .csv files
 ### aren't ready to go in the /data/ folder
 
-filename = "daily_stonks_NYSE_Mid_2000_2009.csv"
+filename = "daily_stonks_NYSE_Large_2010_2019.csv"
 
 df <- read_csv(paste0("data/", filename))
   
@@ -136,7 +136,11 @@ max_df_full <- max_df_full %>%
     time_to_maxgc == min(time_to_maxgc) ~ 1,
     TRUE ~ cumprod(1+(pct_change/100))
   )) %>%
-  rename(time_to_gc = time_to_maxgc)
+  rename(time_to_gc = time_to_maxgc) %>%
+  mutate(normalized_3 = prccd/sum(case_when(
+    time_to_gc == min(time_to_gc) ~ prccd,
+    TRUE ~ 0
+  )))
 
 ### Find +/- 120 days from first gc
 
@@ -189,7 +193,11 @@ min_df_full <- min_df_full %>%
     time_to_mingc == min(time_to_mingc) ~ 1,
     TRUE ~ cumprod(1+(pct_change/100))
   )) %>%
-  rename(time_to_gc = time_to_mingc)
+  rename(time_to_gc = time_to_mingc) %>%
+  mutate(normalized_3 = prccd/sum(case_when(
+    time_to_gc == min(time_to_gc) ~ prccd,
+    TRUE ~ 0
+  )))
 
 rm(df)
 
@@ -217,3 +225,10 @@ rm(max_df, max_df_full, min_df, min_df_full)
 df_70 <- full_df %>%
   filter(time_to_gc >= -70 & time_to_gc <= 70)
 
+df_neg_70 <- full_df %>%
+  filter(time_to_gc >= -120 & time_to_gc <= -20) %>%
+  mutate(time_to_neg70 = time_to_gc + 70) %>%
+  mutate(neg70 = case_when(
+    time_to_neg70 < 0 ~ 0,
+    TRUE ~ 1
+  ))

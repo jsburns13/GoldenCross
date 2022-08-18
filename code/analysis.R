@@ -6,7 +6,7 @@ library(rdrobust)
 # model_1 <- feols(normalized ~ time_to_gc * gc_pre_post + date, data = full_df)
 # etable(model_1)
 # 
-# model_2 <- feols(normalized_2 ~ time_to_gc * gc_pre_post + date, data = full_df)
+# model_2 <- feols(normalized_2 ~ time_to_gc * gc_pre_post + date, data = get(feols_tbl[1]))
 # etable(model_2)
 # 
 # model_1rd <- rdrobust(full_df$normalized, full_df$time_to_gc, c=0, p=1, h=70, kernel="uniform") %>%
@@ -23,19 +23,19 @@ library(rdrobust)
 ### Better log analysis here
 # Why are we using a normalized price? Let's go back to the natural log
 
-market_cap = "Large" # This is just for filling in graph names; not used to pull data set
-table_name = "large_df"
-feols_tbl = "large_df_70"
+market_cap = "All" # This is just for filling in graph names; not used to pull data set
+table_name = "full_df"
+feols_tbl = "df_70"
 
-rdplot(get(table_name[1])$logprice, get(table_name[1])$time_to_gc, c=0, p=1, h=70, kernel="uniform",
+rdplot(get(table_name[1])$normalized_3, get(table_name[1])$time_to_gc, c=0, p=1, h=10, kernel="uniform",
        title=paste0(market_cap," Cap Log Price"))
 
 # omg that looks great
 
-model_log_rd <- rdrobust(get(table_name[1])$logprice, get(table_name[1])$time_to_gc, c=0, p=1, h=70, kernel="uniform") %>%
+model_log_rd <- rdrobust(get(table_name[1])$normalized_3, get(table_name[1])$time_to_gc, c=0, p=1, h=10, kernel="uniform") %>%
   summary()
 
-model_log <- feols(logprice ~ time_to_gc * gc_pre_post, data = get(feols_tbl[1]))
+model_log <- feols(normalized_3 ~ time_to_gc * gc_pre_post, data = get(feols_tbl[1]))
 etable(model_log)
 
 #model_log_rd <- rdrobust(get(table_name[1])$prccd, get(table_name[1])$time_to_gc, covs=fixed_tic, c=0, p=1, h=70, kernel="uniform") %>%
@@ -43,13 +43,17 @@ etable(model_log)
 
 ### What's going on at t = -70?
 
-pre_gc_log_model <- rdrobust(get(table_name[1])$logprice, get(table_name[1])$time_to_gc, c=-70, p=1, h=50, kernel="uniform") %>%
+pre_gc_log_model <- rdrobust(get(table_name[1])$normalized_3, get(table_name[1])$time_to_gc, c=-70, p=1, h=50, kernel="uniform") %>%
   summary()
 
-rdplot(get(table_name[1])$logprice, get(table_name[1])$time_to_gc, c=-70, p=1, h=50, kernel="uniform",
+rdplot(get(table_name[1])$normalized_3, get(table_name[1])$time_to_gc, c=-70, p=1, h=50, kernel="uniform",
        title=paste0(market_cap," Cap Log Price"))
 
-ggplot(df_70, aes(x=time_to_gc, y=logprice, color=gc_pre_post)) +
+model_log_neg70 <- feols(normalized_3 ~ time_to_neg70 * neg70, data = df_neg_70)
+etable(model_log_neg70)
+
+ggplot(df_70, aes(x=time_to_gc, y=normalized_3, color=gc_pre_post)) +
   geom_point() +
   geom_vline(xintercept=0) +
-  geom_smooth(method="lm", se=FALSE)
+  geom_smooth(method="lm", se=FALSE) +
+  coord_cartesian(ylim=c(0.5,4))
